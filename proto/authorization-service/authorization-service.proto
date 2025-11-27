@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package authorization.v1;
 
-option go_package = "github.com/your-org/authorization-service/gen/proto/authorization/v1;authorizationv1";
+option go_package = "github.com/GrishanyaaShustov/CloudStorage-Protos-Service/gen/go/authorization-service;authorizationservicev1";
 
 import "google/protobuf/timestamp.proto";
 
