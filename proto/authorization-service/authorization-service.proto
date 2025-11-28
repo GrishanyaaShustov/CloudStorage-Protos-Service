@@ -42,7 +42,7 @@ service AuthorizationService {
 // user_id – идентификатор Kratos identity.
 message User {
   string user_id = 1;
-  string login   = 2; // Может быть не уникальным, как ты и планируешь.
+  string login   = 2; // Может быть не уникальным
   string email   = 3;
   bool   email_verified = 4;
 
