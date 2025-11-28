@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package authorization.v1;
+
+option go_package = "github.com/GrishanyaaShustov/CloudStorage-Protos-Service/gen/go/authorization-service;authorizationservicev1";
+
+// AuthorizationService handles token-level operations:
+// introspection and explicit revocation.
+service AuthorizationService {
+  // Returns metadata about an access or refresh token.
+  rpc IntrospectToken(IntrospectTokenRequest) returns (IntrospectTokenResponse);
+
+  // Revokes a token via the Hydra revocation endpoint.
+  rpc RevokeToken(RevokeTokenRequest) returns (RevokeTokenResponse);
+}
+
+// -------------------------
+// Token introspection
+// -------------------------
+
+message IntrospectTokenRequest {
+  // Access or refresh token to introspect.
+  string token = 1;
+
+  // Optional hint for the token type: "access_token" or "refresh_token".
+  string token_type_hint = 2;
+}
+
+message IntrospectTokenResponse {
+  // "active" field as defined in RFC 7662.
+  bool active = 1;
+
+  // Subject identifier, typically the user ID.
+  string subject   = 2;
+
+  // OAuth2 client ID associated with this token.
+  string client_id = 3;
+
+  // Granted scopes, space separated.
+  string scope     = 4;
+
+  // Standard JWT-based timestamps (Unix seconds).
+  int64 exp        = 5;
+  int64 iat        = 6;
+  int64 nbf        = 7;
+
+  string token_type = 8;
+
+  // Raw JSON response returned by Hydra, kept for future extensibility.
+  string raw        = 100;
+}
+
+// -------------------------
+// Token revocation
+// -------------------------
+
+message RevokeTokenRequest {
+  string token           = 1;
+  string token_type_hint = 2;
+  string client_id       = 3;
+  string client_secret   = 4;
+}
+
+message RevokeTokenResponse {
+  bool success = 1;
+}

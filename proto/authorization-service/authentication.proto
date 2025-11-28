@@ -1,0 +1,120 @@
+syntax = "proto3";
+
+package authorization.v1;
+
+option go_package = "github.com/GrishanyaaShustov/CloudStorage-Protos-Service/gen/go/authorization-service;authorizationservicev1";
+
+import "authorization-service/common.proto";
+
+// AuthenticationService is responsible for user registration and login flows.
+// It orchestrates Kratos (identity) and Hydra (token issuance).
+service AuthenticationService {
+  // Registers a new user in the identity provider.
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+
+  // Confirms email using a verification code or flow identifier.
+  rpc VerifyEmail(VerifyEmailRequest) returns (VerifyEmailResponse);
+
+  // Authenticates the user with email + password and returns OAuth2/OIDC tokens.
+  rpc Login(LoginRequest) returns (LoginResponse);
+
+  // Issues a new access token (and optionally refresh token) using a refresh token.
+  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
+
+  // Performs explicit logout by revoking the refresh token / session.
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
+}
+
+// -------------------------
+// Registration
+// -------------------------
+
+message RegisterRequest {
+  // Optional login alias. Does not have to be unique.
+  string login = 1;
+
+  // Primary email, must be unique and is used for login.
+  string email = 2;
+
+  // Plain-text password sent over TLS and stored as a hash in the identity store.
+  string password = 3;
+}
+
+message RegisterResponse {
+  User user = 1;
+}
+
+// -------------------------
+// Email verification
+// -------------------------
+
+message VerifyEmailRequest {
+  // Verification code or token received by email.
+  string verification_code = 1;
+
+  // Optional Kratos flow identifier if the provider requires it.
+  string flow_id = 2;
+}
+
+message VerifyEmailResponse {
+  User user = 1;
+}
+
+// -------------------------
+// Login / token issuance
+// -------------------------
+
+message LoginRequest {
+  // Login is done using email + password.
+  string email = 1;
+  string password = 2;
+
+  // OAuth2 client configuration used to talk to Hydra.
+  string client_id     = 3;
+  string client_secret = 4; // May be empty for public clients.
+
+  // PKCE code verifier if the client uses PKCE.
+  string code_verifier = 5;
+
+  // Optional additional scopes to request.
+  string scope         = 6;
+}
+
+message LoginResponse {
+  User        user   = 1;
+  OAuthTokens tokens = 2;
+}
+
+// -------------------------
+// Token refresh
+// -------------------------
+
+message RefreshTokenRequest {
+  string refresh_token = 1;
+  string client_id     = 2;
+  string client_secret = 3;
+
+  // Optional scopes. If empty, the original scopes are reused.
+  string scope         = 4;
+}
+
+message RefreshTokenResponse {
+  OAuthTokens tokens = 1;
+}
+
+// -------------------------
+// Logout
+// -------------------------
+
+message LogoutRequest {
+  // Refresh token used to invalidate the session.
+  string refresh_token = 1;
+
+  string client_id     = 2;
+  string client_secret = 3;
+}
+
+message LogoutResponse {
+  // Indicates whether logout/revocation completed successfully.
+  bool success = 1;
+}

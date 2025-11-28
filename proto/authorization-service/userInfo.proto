@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package authorization.v1;
+
+option go_package = "github.com/GrishanyaaShustov/CloudStorage-Protos-Service/gen/go/authorization-service;authorizationservicev1";
+
+import "authorization-service/common.proto";
+
+// UserInfoService provides high-level APIs to fetch user profile data
+// based on an access token. It typically combines token introspection
+// with a lookup in the identity provider.
+service UserInfoService {
+  // Resolves the current user by access token and returns basic profile data.
+  rpc GetCurrentUser(GetCurrentUserRequest) returns (GetCurrentUserResponse);
+}
+
+message GetCurrentUserRequest {
+  // Access token issued by Hydra.
+  string access_token = 1;
+}
+
+message GetCurrentUserResponse {
+  User user = 1;
+
+  // Optional raw ID token claims. The server may choose to return
+  // a serialized ID token payload if needed by callers.
+  string id_token_raw = 2;
+}

@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package authorization.v1;
+
+option go_package = "github.com/GrishanyaaShustov/CloudStorage-Protos-Service/gen/go/authorization-service;authorizationservicev1";
+
+import "google/protobuf/timestamp.proto";
+
+// Basic user info coming from the identity provider (Kratos).
+message User {
+  // Internal identity ID (e.g. Kratos identity UUID).
+  string user_id = 1;
+
+  // Optional user-facing login identifier. Not required to be unique.
+  string login = 2;
+
+  // Primary email address used for login.
+  string email = 3;
+
+  // Indicates whether email has been verified.
+  bool email_verified = 4;
+
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+}
+
+// Set of OAuth2/OIDC tokens issued by Hydra.
+message OAuthTokens {
+  string access_token  = 1;
+  string refresh_token = 2;
+  string id_token      = 3;
+
+  // Lifetime of the access_token in seconds (as returned by Hydra).
+  int64  expires_in    = 4;
+
+  // "Bearer".
+  string token_type    = 5;
+
+  // Granted scopes, space separated.
+  string scope         = 6;
+}
