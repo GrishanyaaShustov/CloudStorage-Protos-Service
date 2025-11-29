@@ -6,9 +6,9 @@ option go_package = "github.com/GrishanyaaShustov/CloudStorage-Protos-Service/ge
 
 import "google/protobuf/timestamp.proto";
 
-// Basic user info coming from the identity provider (Kratos).
+// Basic user info coming from the identity provider.
 message User {
-  // Internal identity ID (e.g. Kratos identity UUID).
+  // Internal identity ID
   string user_id = 1;
 
   // Optional user-facing login identifier. Not required to be unique.
@@ -24,13 +24,13 @@ message User {
   google.protobuf.Timestamp updated_at = 11;
 }
 
-// Set of OAuth2/OIDC tokens issued by Hydra.
+// Set of OAuth2/OIDC tokens issued.
 message OAuthTokens {
   string access_token  = 1;
   string refresh_token = 2;
   string id_token      = 3;
 
-  // Lifetime of the access_token in seconds (as returned by Hydra).
+  // Lifetime of the access_token in seconds.
   int64  expires_in    = 4;
 
   // "Bearer".
